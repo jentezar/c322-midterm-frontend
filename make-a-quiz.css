@@ -20,6 +20,10 @@
     bottom: 900px; /* Remove or adjust this */
 }
 
+.new-quiz-container{
+  position: relative;
+}
+
   .quiz-title-container{
     display: flex;
     align-items: center;

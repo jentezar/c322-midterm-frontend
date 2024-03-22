@@ -24,9 +24,10 @@
     <div class="quiz-title-container">
         <h1 style="font-size: 20px;">Quiz Title:</h1>
         <input type="text" id="quizTitleInput" placeholder="Enter quiz title">
+        <h2 id="question-count" style="font-size: 15px;">0 Questions</h2>
     </div>
     <button id="saveChanges" onclick="saveChangesToBackend()">Save your changes</button>
-    <button id="saveAndStartNew" style="margin-top: 10px;">Save this quiz and start a new one</button>
+    <button id="saveAndStartNew" style="margin-top: 10px;" onclick="saveChangesToBackend()" onclick="clearNQ()">Save this quiz and start a new one</button>
     <h1 style="font-size: 20px;">If you want to remove a question from the quiz, you can click on the question here and it will be removed from the quiz</h1>
     <div id="cardInQuiz"></div> 
   </div>
@@ -34,7 +35,26 @@
 <script>
   let host = "http://localhost:8080";
   let questions = [];
+  let questionCount = 0;
   displayTheQuestions();
+
+  function incrementQuestionCount() {
+    questionCount++;
+    let newQuizDiv = document.querySelector('.new-quiz'); // Selecting the new-quiz div
+    let questionCountElement = newQuizDiv.querySelector('#question-count'); // Selecting the h2 element inside new-quiz
+
+    // Update the text content of the h2 element
+    questionCountElement.textContent = `${questionCount} Question${questionCount !== 1 ? 's' : ''}`;
+}
+
+function decrementQuestionCount() {
+    questionCount--;
+    let newQuizDiv = document.querySelector('.new-quiz'); // Selecting the new-quiz div
+    let questionCountElement = newQuizDiv.querySelector('#question-count'); // Selecting the h2 element inside new-quiz
+
+    // Update the text content of the h2 element
+    questionCountElement.textContent = `${questionCount} Question${questionCount !== 1 ? 's' : ''}`;
+}
 
   async function getAll(){
     let response = await fetch(host + "/questions");
@@ -78,6 +98,7 @@
     (function(question) {
       div.addEventListener('click', function() {
         displayQuestionInNewQuiz(question);
+        incrementQuestionCount();
       });
     })(question);
   }
@@ -98,6 +119,7 @@ function displayQuestionInNewQuiz(question) {
       </div>`;
 
       questionDiv.addEventListener('click', function() {
+      decrementQuestionCount();
       questionDiv.parentNode.removeChild(questionDiv);
     });
 
@@ -143,7 +165,7 @@ async function saveChangesToBackend() {
     }
   } catch (error) {
     console.error("Error saving changes:", error.message);
-    alert("Error saving changes: " + error.message);
+    alert("Error saving changes: " + error.message);     
   }
 }
 
@@ -172,15 +194,9 @@ async function checkQuizExists(quizTitle) {
     return false; // Return false if an error occurs
   }
 }
-
-
-
-
-
-
-
-
-
-
+function clearNQ() {
+    const cardInQuiz = document.getElementById('cardInQuiz');
+    cardInQuiz.innerHTML = ""; // Clear all child elements
+}
 </script>
 </html>
