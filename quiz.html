@@ -90,20 +90,23 @@
     }
 
     function nextQuestion() {
+      let question = questions[currentQuestionIndex];
+      let selectedAnswer = document.querySelector('input[name="answer"]:checked');
+      if (selectedAnswer) {
+        if (selectedAnswer.value === question.answer) {
+          // Increment score if the selected answer is correct
+          score++;
+        }
+      }
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         displayQuestion(currentQuestionIndex);
       } else {
-        // Show score or perform any other action for the last question
-        let question = questions[currentQuestionIndex];
-        let selectedAnswer = document.querySelector('input[name="answer"]:checked');
-        if (selectedAnswer) {
-          if (selectedAnswer.value === question.correctAnswer) {
-            // Increment score if the selected answer is correct
-            score++;
-          }
-        }
-        alert("Your Score: " + score);
+        // Redirect to answer.html with the score and quizId as query parameters
+        const queryParams = new URLSearchParams();
+        queryParams.append('score', score);
+        queryParams.append('quizId', getQuizIdFromUrl());
+        window.location.href = `answer.html?${queryParams.toString()}`;
       }
     }
 
@@ -118,8 +121,9 @@
     }
 
     function updateSelectedAnswer(input) {
-      selectedAnswer = input.value;
+      let selectedAnswer = input.value;
     }
+
   </script>
 </body>
 </html>
